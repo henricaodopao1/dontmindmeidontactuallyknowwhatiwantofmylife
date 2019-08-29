@@ -52,6 +52,8 @@ int cnss_usb_dev_powerup(struct cnss_plat_data *plat_priv)
 	switch (plat_priv->device_id) {
 	case QCN7605_COMPOSITE_DEVICE_ID:
 	case QCN7605_STANDALONE_DEVICE_ID:
+	case QCN7605_VER20_STANDALONE_DEVICE_ID:
+	case QCN7605_VER20_COMPOSITE_DEVICE_ID:
 		ret = cnss_qcn7605_usb_powerup(plat_priv);
 		break;
 	default:
@@ -71,6 +73,12 @@ int cnss_usb_wlan_register_driver(struct cnss_usb_wlan_driver *driver_ops)
 	if (!plat_priv) {
 		cnss_pr_err("plat_priv is NULL\n");
 		return -ENODEV;
+	}
+
+	if (plat_priv->bus_type != CNSS_BUS_USB) {
+		cnss_pr_err("Wrong bus type. Expected bus_type %d\n",
+			    plat_priv->bus_type);
+		return -EFAULT;
 	}
 
 	usb_priv = plat_priv->bus_priv;
